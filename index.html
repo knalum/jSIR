@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>jsir</title>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.js"></script>
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.1.0/dygraph.min.css" />
+	<script type="text/javascript" src="js/zepto.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<h4>
+	jsir - javascript SIR-model simulation
+</h4>
+
+<div id="params">
+	
+	
+	<table>
+		<tr>
+			<td>
+				<b>Parameters</b>
+			</td>
+		</tr>
+		<tr>
+			<td>Infection rate</td>
+			<td>
+				<input type="number" id="beta" placeholder="beta" autofocus="true" value="0.29"/>
+			</td>
+
+			<td>Recovery rate</td>
+			<td>
+				<input type="number" id="gamma" placeholder="gamma" value="0.15"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<b>Initial conditions</b>
+			</td>
+		</tr>
+		<tr>
+			<td class="param_S">Susceptible</td>
+			<td>
+				<input type="number" id="S0" placeholder="S0" value="5000000"/>
+			</td>
+		
+			<td class="param_I">Infected</td>
+			<td>
+				<input type="number" id="I0" placeholder="I0" value="1"/>
+			</td>
+		
+			<td class="param_R">Recovered</td>
+			<td>
+				<input type="number" id="R0" placeholder="R0" value="0"/>
+			</td>
+		</tr>
+		<tr>
+			<tr>
+				<td>
+					Days
+				</td>
+				<td>
+					<input type="number" id="L" placeholder="Days" value="100"/>
+				</td>
+			</tr>
+		</tr>
+	</table>
+</div>
+
+<br/>
+<button id="reset">Reset to default values</button>
+<br/>
+<br/>
+<button id="run">Run</button>
+<br/>
+<br/>
+
+<div id="legendWrapper">
+	<div id="legend"></div>
+</div>
+
+<div id="graphdiv" width="600"></div>
+
+
+<div class="footer">
+	jSIR is an application for simulation of a <a href="https://mathworld.wolfram.com/SIRModel.html#:~:text=An%20SIR%20model%20is%20an,a%20closed%20population%20over%20time." target="_blank">SIR-model</a>.
+	Equation system based on <a href="http://www.pandemsim.com/data/index.php/make-your-own-sir-model/" target="_blank">Pandem-Data</a>.
+	<br/>
+	Made by Konstantin Nalum 2020
+</div>
+<script src="js/app.js"></script>
+</body>
+</html>
