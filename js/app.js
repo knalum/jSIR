@@ -1,45 +1,11 @@
+/*
+* 	jSIR created by Konstantin Nalum.
+*	Charting library and interaction taken from http://dygraphs.com/ 
+*/
 $(document).ready(function(){
 	// globals
 	
 	const el = document.getElementById("graphdiv")
-
-
-	function downV3(event, g, context) {
-	  context.initializeMouseDown(event, g, context);
-	  if (event.altKey || event.shiftKey) {
-	    Dygraph.startZoom(event, g, context);
-	  } else {
-	    Dygraph.startPan(event, g, context);
-	  }
-	}
-
-	function moveV3(event, g, context) {
-	  if (context.isPanning) {
-	    Dygraph.movePan(event, g, context);
-	  } else if (context.isZooming) {
-	    Dygraph.moveZoom(event, g, context);
-	  }
-	}
-
-	function upV3(event, g, context) {
-	  if (context.isPanning) {
-	    Dygraph.endPan(event, g, context);
-	  } else if (context.isZooming) {
-	    Dygraph.endZoom(event, g, context);
-	  }
-	}
-
-	function restorePositioning(g) {
-	  g.updateOptions({
-	    dateWindow: null,
-	    valueRange: null
-	  });
-	}
-
-	function dblClickV4(event, g, context) {
-	  restorePositioning(g);
-	}
-
 
 	const opts = {
 		drawPoints: true,
@@ -65,13 +31,11 @@ $(document).ready(function(){
 			x:{
 				valueFormatter: function(ms){
 					let dt = new Date(ms).toISOString().split("T")[0]
-
 					return "Date: "+dt
 				}
 			},
 			y:{
 				valueFormatter:function(y){
-					// Susceptible & recovered
 					return numberWithCommas(Math.round(y))
 				},
 				axisLabelFormatter: function(y) {
@@ -80,7 +44,6 @@ $(document).ready(function(){
                 axisLabelWidth:100
 			},
 			y2:{
-				// Infected
 				valueFormatter:function(y){
 					return numberWithCommas(Math.round(y))
 				},
@@ -95,11 +58,10 @@ $(document).ready(function(){
 	// init
 	loadFromLocalStorage()
 	runSim()
-	
 
 	// Calc
 	function calcX(){
-		const L = parseFloat($("#L").val())
+		const L = getDays()
 		const beta = parseFloat($("#beta").val())
 		const gamma = parseFloat($("#gamma").val())
 
@@ -107,7 +69,6 @@ $(document).ready(function(){
 		const I0 = parseFloat($("#I0").val())
 		const R0 = parseFloat($("#R0").val())
 
-		
 		let X = []
 		X.push({"t":0,"S":S0,"I":I0,"R":R0})
 		for(let n=1;n<L;++n){
@@ -124,7 +85,9 @@ $(document).ready(function(){
 
 	function transformData(X){
 		let tX = []
-		var t = new Date()
+
+		const startDate = $("#startDate").val()
+		var t = new Date(startDate)
 		for(var i=0;i<X.length;++i){
 			let dt = new Date(t.getTime()+i*1000*60*60*24)
 			tX.push(
@@ -155,6 +118,12 @@ $(document).ready(function(){
 		}
 	})
 
+	$("input[type=date]").change(function(e){
+		runSim()
+	})
+
+
+
 	$("input").blur(function(e){
 		persistToLocalStorage()
 	})
@@ -166,8 +135,22 @@ $(document).ready(function(){
 	}
 
 	// util
+
+	function getDays(){
+		const start = $("#startDate").val()
+		const stop = $("#stopDate").val()
+
+		const startDate = new Date(start)
+		const stopDate = new Date(stop)
+		const diff = stopDate.getTime()-startDate.getTime()
+
+		const days = diff/1000/60/60/24
+
+		return days+1
+	}	
+
 	function persistToLocalStorage(){
-		const L = parseFloat($("#L").val())
+		
 		const beta = parseFloat($("#beta").val())
 		const gamma = parseFloat($("#gamma").val())
 
@@ -175,8 +158,11 @@ $(document).ready(function(){
 		const I0 = parseFloat($("#I0").val())
 		const R0 = parseFloat($("#R0").val())
 
+		const startDate = $("#startDate").val()
+		const stopDate = $("#stopDate").val()
+
 		var inputs = {
-			L,beta,gamma,S0,I0,R0
+			beta,gamma,S0,I0,R0,startDate,stopDate
 		}
 		localStorage.setItem("inputs",JSON.stringify(inputs))
 	}
@@ -185,12 +171,14 @@ $(document).ready(function(){
 		const inputsStr = localStorage.getItem("inputs")
 		if( inputsStr && JSON.parse(inputsStr)){
 			const inputs = JSON.parse(inputsStr)
-			$("#L").val(inputs.L)
+			
 			$("#beta").val(inputs.beta)
 			$("#gamma").val(inputs.gamma)
 			$("#S0").val(inputs.S0)
 			$("#I0").val(inputs.I0)
 			$("#R0").val(inputs.R0)
+			$("#startDate").val(inputs.startDate)
+			$("#stopDate").val(inputs.stopDate)
 		}
 	}
 
@@ -228,6 +216,39 @@ $(document).ready(function(){
 	  return [xPct, (1-yPct)];
 	}
 
-	
-})
+	function downV3(event, g, context) {
+	  context.initializeMouseDown(event, g, context);
+	  if (event.altKey || event.shiftKey) {
+	    Dygraph.startZoom(event, g, context);
+	  } else {
+	    Dygraph.startPan(event, g, context);
+	  }
+	}
 
+	function moveV3(event, g, context) {
+	  if (context.isPanning) {
+	    Dygraph.movePan(event, g, context);
+	  } else if (context.isZooming) {
+	    Dygraph.moveZoom(event, g, context);
+	  }
+	}
+
+	function upV3(event, g, context) {
+	  if (context.isPanning) {
+	    Dygraph.endPan(event, g, context);
+	  } else if (context.isZooming) {
+	    Dygraph.endZoom(event, g, context);
+	  }
+	}
+
+	function restorePositioning(g) {
+	  g.updateOptions({
+	    dateWindow: null,
+	    valueRange: null
+	  });
+	}
+
+	function dblClickV4(event, g, context) {
+	  restorePositioning(g);
+	}
+})

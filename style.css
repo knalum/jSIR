@@ -2,7 +2,6 @@ html{
 	font-family: "Trebuchet MS";
 	font-size: 12px;
 }
-
 .footer {
 	font-size: 10px;
   	position: fixed;
@@ -11,7 +10,6 @@ html{
   	width: 100%;
   	text-align: center;
 }
-
 .param_S{
 	color:blue;
 }
@@ -23,4 +21,11 @@ html{
 }
 #legendWrapper{
 	height:60px;
+}
+.panel{
+	padding:5px;
+	margin-bottom:10px;
+	width: 800px;
+	border: 1px solid #F1EDC2;
+	background-color: #FFFFF2;
 }
